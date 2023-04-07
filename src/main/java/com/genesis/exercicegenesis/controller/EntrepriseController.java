@@ -1,5 +1,6 @@
 package com.genesis.exercicegenesis.controller;
 
+import com.genesis.exercicegenesis.dao.ContactRepository;
 import com.genesis.exercicegenesis.dao.EntrepriseRepository;
 import com.genesis.exercicegenesis.model.Contact;
 import com.genesis.exercicegenesis.model.Entreprise;
@@ -14,6 +15,8 @@ import java.util.Optional;
 public class EntrepriseController {
     @Autowired
     private EntrepriseRepository repository;
+    @Autowired
+    private ContactRepository contactRepository;
 
     @PostMapping("/saveEntreprise")
     public String saveEntreprise(@RequestBody Entreprise entreprise){
@@ -40,19 +43,25 @@ public class EntrepriseController {
                 .stream()
                 .filter(entreprise -> entreprise.getNumeroTVA()==numeroTVA)
                 .findAny();
-    }cd
+    }
 
     @GetMapping("/findAllEntreprise")
     public List<Entreprise> findAllEntreprise(){
         return repository.findAll();
     }
-    @PostMapping("/addContactEntreprise/{id}")
-    public String addContactEntreprise(@PathVariable("id") int id, @RequestBody Contact contact){
+    @PostMapping("/addContactEntreprise")
+    public String addContactEntreprise(@RequestParam("id") int id, @RequestParam("idContact") int contact){
         Optional<Entreprise> entrepriseData = repository.findById(id);
-
+        Optional<Contact> contactData = contactRepository.findById(contact);
         if (entrepriseData.isPresent()) {
-            entrepriseData.get().getContactList().add(contact);
-            return "Contact added in Entreprise  ...";
+            if(contactData.isPresent()) {
+                contactData.get().getEntrepriseList().add(entrepriseData.get());
+                contactRepository.save(contactData.get());
+                return "Contact added in Entreprise  ...";
+            }
+            else{
+                return "Contact not found ...";
+            }
         } else {
             return "Entreprise not found ...";
         }

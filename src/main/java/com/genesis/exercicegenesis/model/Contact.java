@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Data
@@ -12,11 +13,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Inheritance
 @Entity
-public abstract class Contact {
+public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String adresse;
     private String nom;
     private String prenom;
+    @OneToMany
+    private List<Entreprise> entrepriseList;
 }

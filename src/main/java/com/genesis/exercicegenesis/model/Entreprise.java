@@ -18,6 +18,5 @@ public class Entreprise {
     private int idEntreprise;
     private String adresse;
     private int numeroTVA;
-    @OneToMany
-    private List<Contact> contactList;
+
 }

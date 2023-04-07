@@ -1,8 +1,8 @@
 package com.genesis.exercicegenesis.controller;
 
-import com.genesis.exercicegenesis.dao.EmployeRepository;
+import com.genesis.exercicegenesis.dao.ContactRepository;
 import com.genesis.exercicegenesis.dao.FreelanceRepository;
-import com.genesis.exercicegenesis.model.Employe;
+import com.genesis.exercicegenesis.model.Contact;
 import com.genesis.exercicegenesis.model.Freelance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class ContactController {
 
     @Autowired
-    private EmployeRepository repositoryE;
+    private ContactRepository repositoryE;
     @Autowired
     private  FreelanceRepository repositoryF;
     @PostMapping("/saveFreelance")
@@ -25,8 +25,8 @@ public class ContactController {
         return "Contact Freelance saved ...";
     }
     @PostMapping("/saveEmploye")
-    public String saveEmploye(@RequestBody Employe employe){
-        repositoryE.save(employe);
+    public String saveEmploye(@RequestBody Contact contact){
+        repositoryE.save(contact);
         return "Contact Employee saved ...";
     }
 
@@ -47,51 +47,37 @@ public class ContactController {
         }
     }
     @PutMapping("/updateEmploye/{id}")
-    public String updateEmploye(@PathVariable("id") int id, @RequestBody Employe employe){
-        Optional<Employe> employeData = repositoryE.findById(id);
+    public String updateEmploye(@PathVariable("id") int id, @RequestBody Contact employe){
+        Optional<Contact> employeData = repositoryE.findById(id);
 
         if (employeData.isPresent()) {
-            Employe employeTemp = employeData.get();
-            employeTemp.setAdresse(employe.getAdresse());
-            employeTemp.setNom(employe.getNom());
-            employeTemp.setPrenom(employe.getPrenom());
+            Contact employeTemp = employeData.get();
+            if (!ObjectUtils.isEmpty(employeTemp.getAdresse())) employeTemp.setAdresse(employe.getAdresse());
+            if (!ObjectUtils.isEmpty(employeTemp.getNom())) employeTemp.setNom(employe.getNom());
+            if (!ObjectUtils.isEmpty(employeTemp.getPrenom())) employeTemp.setPrenom(employe.getPrenom());
             repositoryE.save(employeTemp);
             return "Contact Employee updated ...";
         } else {
             return "Contact Employee not found ...";
         }
     }
-    @DeleteMapping("/deleteFreelance/{id}")
+    @DeleteMapping("/deleteContact/{id}")
     public String deleteFreelance(@PathVariable("id") int id){
 
-        Optional<Freelance> FreelanceData = repositoryF.findById(id);
+        Optional<Contact> contactData = repositoryE.findById(id);
 
-        if (FreelanceData.isPresent()) {
-            repositoryF.deleteById(id);
-            return "Contact Freelance deleted ...";
-        } else {
-            return "Contact Freelance not found ...";
-        }
-    }
-    @DeleteMapping("/deleteEmploye/{id}")
-    public String deleteEmploye(@PathVariable("id") int id){
-
-        Optional<Employe> employeData = repositoryE.findById(id);
-
-        if (employeData.isPresent()) {
+        if (contactData.isPresent()) {
             repositoryE.deleteById(id);
-            return "Contact Employee deleted ...";
+            return "Contact deleted ...";
         } else {
-            return "Contact Employee not found ...";
+            return "Contact not found ...";
         }
     }
-    @GetMapping("/getAllContactEmployee")
-    public List<Employe> getAllEmploye(){
+
+    @GetMapping("/getAllContact")
+    public List<Contact> getAll(){
        return repositoryE.findAll();
     }
-    @GetMapping("/getAllContactFreelance")
-    public List<Freelance> getAllFreelance(){
-        return repositoryF.findAll();
-    }
+
 
 }
