@@ -20,6 +20,7 @@ public class Contact {
     private String adresse;
     private String nom;
     private String prenom;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_entreprise_id",referencedColumnName = "id")
     private List<Entreprise> entrepriseList;
 }

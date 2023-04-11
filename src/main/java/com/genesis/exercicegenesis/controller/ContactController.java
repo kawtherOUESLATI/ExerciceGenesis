@@ -30,8 +30,8 @@ public class ContactController {
         return "Contact Employee saved ...";
     }
 
-    @PutMapping("/updateFreelance/{id}")
-    public String updateFreelance(@PathVariable("id") int id, @RequestBody Freelance freelance){
+    @PutMapping("/updateFreelance")
+    public String updateFreelance(@RequestParam("id") int id, @RequestBody Freelance freelance){
         Optional<Freelance> freelanceData = repositoryF.findById(id);
 
         if (freelanceData.isPresent()) {
@@ -46,23 +46,23 @@ public class ContactController {
             return "Contact Freelance not found ...";
         }
     }
-    @PutMapping("/updateEmploye/{id}")
-    public String updateEmploye(@PathVariable("id") int id, @RequestBody Contact employe){
+    @PutMapping("/updateEmploye")
+    public String updateEmploye(@RequestParam("id") int id, @RequestBody Contact employe){
         Optional<Contact> employeData = repositoryE.findById(id);
 
         if (employeData.isPresent()) {
             Contact employeTemp = employeData.get();
-            if (!ObjectUtils.isEmpty(employeTemp.getAdresse())) employeTemp.setAdresse(employe.getAdresse());
-            if (!ObjectUtils.isEmpty(employeTemp.getNom())) employeTemp.setNom(employe.getNom());
-            if (!ObjectUtils.isEmpty(employeTemp.getPrenom())) employeTemp.setPrenom(employe.getPrenom());
+            if (!ObjectUtils.isEmpty(employe.getAdresse())) employeTemp.setAdresse(employe.getAdresse());
+            if (!ObjectUtils.isEmpty(employe.getNom())) employeTemp.setNom(employe.getNom());
+            if (!ObjectUtils.isEmpty(employe.getPrenom())) employeTemp.setPrenom(employe.getPrenom());
             repositoryE.save(employeTemp);
             return "Contact Employee updated ...";
         } else {
             return "Contact Employee not found ...";
         }
     }
-    @DeleteMapping("/deleteContact/{id}")
-    public String deleteFreelance(@PathVariable("id") int id){
+    @DeleteMapping
+    public String deleteContact(@RequestParam("id") int id){
 
         Optional<Contact> contactData = repositoryE.findById(id);
 
@@ -74,7 +74,7 @@ public class ContactController {
         }
     }
 
-    @GetMapping("/getAllContact")
+    @GetMapping
     public List<Contact> getAll(){
        return repositoryE.findAll();
     }

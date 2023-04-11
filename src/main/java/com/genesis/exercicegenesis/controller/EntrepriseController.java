@@ -5,6 +5,7 @@ import com.genesis.exercicegenesis.dao.EntrepriseRepository;
 import com.genesis.exercicegenesis.model.Contact;
 import com.genesis.exercicegenesis.model.Entreprise;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,39 +19,39 @@ public class EntrepriseController {
     @Autowired
     private ContactRepository contactRepository;
 
-    @PostMapping("/saveEntreprise")
+    @PostMapping
     public String saveEntreprise(@RequestBody Entreprise entreprise){
         repository.save(entreprise);
         return "Entreprise saved ...";
     }
-    @PutMapping("/updateEntreprise/{id}")
-    public String updateFreelance(@PathVariable("id") int id, @RequestBody Entreprise entreprise){
+    @PutMapping
+    public String updateEntreprise(@RequestParam("id") int id, @RequestBody Entreprise entreprise){
         Optional<Entreprise> entrepriseData = repository.findById(id);
 
         if (entrepriseData.isPresent()) {
             Entreprise entrepriseTemp = entrepriseData.get();
-            entrepriseTemp.setAdresse(entreprise.getAdresse());
-            entrepriseTemp.setNumeroTVA(entreprise.getNumeroTVA());
+            if (!ObjectUtils.isEmpty(entreprise.getAdresse())) entrepriseTemp.setAdresse(entreprise.getAdresse());
+            if (!ObjectUtils.isEmpty(entreprise.getNumeroTVA())) entrepriseTemp.setNumeroTVA(entreprise.getNumeroTVA());
             repository.save(entrepriseTemp);
             return "Entreprise updated ...";
         } else {
             return "Entreprise not found ...";
         }
     }
-    @GetMapping("/findEntrepriseByTVA/{numeroTVA}")
-    public Optional<Entreprise> findEntrepriseByTVA(@PathVariable("numeroTVA") int numeroTVA){
+    @GetMapping("/findEntrepriseByTVA")
+    public Optional<Entreprise> findEntrepriseByTVA(@RequestParam("numeroTVA") int numeroTVA){
         return repository.findAll()
                 .stream()
                 .filter(entreprise -> entreprise.getNumeroTVA()==numeroTVA)
                 .findAny();
     }
 
-    @GetMapping("/findAllEntreprise")
+    @GetMapping
     public List<Entreprise> findAllEntreprise(){
         return repository.findAll();
     }
     @PostMapping("/addContactEntreprise")
-    public String addContactEntreprise(@RequestParam("id") int id, @RequestParam("idContact") int contact){
+    public String addContactEntreprise(@RequestParam("idEntreprise") int id, @RequestParam("idContact") int contact){
         Optional<Entreprise> entrepriseData = repository.findById(id);
         Optional<Contact> contactData = contactRepository.findById(contact);
         if (entrepriseData.isPresent()) {
